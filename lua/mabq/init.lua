@@ -1,5 +1,4 @@
 require 'mabq.set'
 require 'mabq.remap'
-require 'mabq.autocmd'
 require 'mabq.lazy_init'
-require 'mabq.plugins'
+require 'mabq.autocmd'

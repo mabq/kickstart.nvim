@@ -1,45 +1,32 @@
 function ColorMyPencils(color)
-  color = color or 'rose-pine'
+  color = color or 'tokyonight'
   vim.cmd.colorscheme(color)
-  --
-  -- vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
-  -- vim.api.nvim_set_hl(0, 'NormalFloat', { bg = 'none' })
 end
 
 return {
   {
     'folke/tokyonight.nvim', -- edit some tokyonight colors
-    -- use config (not opts) for customizations to work
+    -- use `config` (not `opts`) for customizations to work when calling `ColorMyPencils`
     config = function()
       require('tokyonight').setup {
-        style = 'night',
-        -- transparent = true, -- enable this to disable setting the background color
-        -- terminal_colors = true, -- configure the colors used when opening a `:terminal` in Neovim
-        -- styles = {
-        --   sidebars = 'normal', -- style for sidebars, see below
-        --   floats = 'normal', -- style for floating windows
-        -- },
-
-        -- customize some colors
-        on_colors = function(colors)
-          colors.bg_hightlight = colors.yellow
-        end,
+        style = 'night', -- `storm`, `moon`, `night` or `day`
+        -- Customize colors for `night` version
         on_highlights = function(hl, _)
           hl.CursorLine = {
-            bg = '#1f202e', -- much lighter contrast
-          }
-          hl.CursorLineNr = {
-            bold = false, -- disabled bold
-            fg = '#ff9e64',
+            bg = '#1f202e', -- lighter contrast
           }
           hl.CursorColumn = {
-            bg = '#1f202e', -- set it manually `:set cursorColumn!`
+            bg = '#1f202e', -- `:set cursorColumn!`
           }
           hl.ColorColumn = {
-            bg = '#1f202e', -- set it manually with `:colorcolumn=[value|empty]`
+            bg = '#1f202e', -- `:colorcolumn=[value|empty]`
+          }
+          hl.Search = {
+            bg = '#292E42', -- lighter constrast
+            fg = '#c0caf5',
           }
           hl.LspReferenceRead = {
-            bg = '#292E42', -- much lighter contrast
+            bg = '#292E42', -- lighter constrast
           }
           hl.LspReferenceText = {
             bg = '#292E42',
@@ -49,7 +36,7 @@ return {
           }
           hl.WinSeparator = {
             bold = true,
-            fg = '#404464', -- much lighter contrast
+            fg = '#404464', -- lighter contrast
           }
         end,
       }
@@ -61,9 +48,6 @@ return {
     'rose-pine/neovim',
     name = 'rose-pine',
     config = function()
-      -- require('rose-pine').setup {
-      --   disable_background = true,
-      -- }
       ColorMyPencils()
     end,
   },
