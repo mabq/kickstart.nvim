@@ -4,3 +4,5 @@ require 'mabq'
 --   yazi
 --   lazygit
 --   gitui
+--   npm i -g @styled/typescript-styled-plugin typescript-styled-plugin
+--
