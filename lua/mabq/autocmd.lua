@@ -1,20 +1,22 @@
 --  See `:help lua-guide-autocommands`
 
-local augroup = vim.api.nvim_create_augroup
+local function augroup(name)
+    return vim.api.nvim_create_augroup('mabq_' .. name, { clear = true })
+end
+
 local autocmd = vim.api.nvim_create_autocmd
 
-local mabqGroup = augroup('Mabq', {})
+--
 
 autocmd('TextYankPost', {
-    group = augroup('HighlightYank', {}),
-    pattern = '*',
+    group = augroup 'highlightYank',
     callback = function()
-        vim.highlight.on_yank()
+        (vim.hl or vim.highlight).on_yank()
     end,
 })
 
 autocmd({ 'BufWritePre' }, {
-    group = mabqGroup,
+    group = augroup 'removeTraillingSpace',
     pattern = '*',
     command = [[%s/\s\+$//e]],
 })
@@ -31,7 +33,7 @@ autocmd({ 'BufWritePre' }, {
 -- })
 
 autocmd('LspAttach', {
-    group = mabqGroup,
+    group = augroup 'lspAttach',
     callback = function(e)
         -- LSP keymaps
         local opts = { buffer = e.buf }
@@ -43,17 +45,16 @@ autocmd('LspAttach', {
         -- Jump to the definition of the word under your cursor.
         --  This is where a variable was first declared, or where a function is defined, etc.
         vim.keymap.set('n', 'gd', function()
-            --  IMPORTANT! Do not use Trouble for this on in order to be able to jump back with `<C-t>`.
+            --  Do not use Trouble for this one in order to be able to jump back with `<C-t>`.
             vim.lsp.buf.definition()
         end, opts)
 
         -- Find references for the word under your cursor.
-        vim.keymap.set('n', '<leader>lf', '<cmd>Trouble lsp_references focus<CR>', opts)
+        vim.keymap.set('n', '<leader>lf', '<cmd>Trouble lsp_references toggle<CR>', opts)
 
         -- LPS diagnitics
-        vim.keymap.set('n', '<leader>ld', '<cmd>Trouble diagnostics focus<CR>', opts)
-        vim.keymap.set('n', '<leader>lD', '<cmd>Trouble diagnostics focus filter.buf=0<CR>', opts)
-        vim.keymap.set('n', '<leader>lq', '<cmd>Trouble quickfix focus<CR>', opts)
+        vim.keymap.set('n', '<leader>ld', '<cmd>Trouble diagnostics toggle<CR>', opts)
+        vim.keymap.set('n', '<leader>lD', '<cmd>Trouble diagnostics toggle filter.buf=0<CR>', opts)
 
         -- Important! This is not Goto Definition, this is Goto Declaration.
         --  For example, in C this would take you to the header.
@@ -61,26 +62,26 @@ autocmd('LspAttach', {
 
         -- Jump to the implementation of the word under your cursor.
         --  Useful when your language has ways of declaring types without an actual implementation.
-        vim.keymap.set('n', '<leader>li', '<cmd>Trouble lsp_implementations focus<CR>', opts)
+        vim.keymap.set('n', '<leader>li', '<cmd>Trouble lsp_implementations toggle<CR>', opts)
 
         -- Jump to the type of the word under your cursor.
         --  Useful when you're not sure what type a variable is and you want to see
         --  the definition of its *type*, not where it was *defined*.
-        vim.keymap.set('n', '<leader>lt', '<cmd>Trouble lsp_type_definitions focus<CR>', opts)
+        vim.keymap.set('n', '<leader>lt', '<cmd>Trouble lsp_type_definitions toggle<CR>', opts)
 
         -- Fuzzy find all the symbols in your current document.
         --  Symbols are things like variables, functions, types, etc.
-        vim.keymap.set('n', '<leader>ls', '<cmd>Trouble lsp_document_symbols focus<CR>', opts)
+        vim.keymap.set('n', '<leader>ls', '<cmd>Trouble lsp_document_symbols toggle<CR>', opts)
 
         vim.keymap.set('n', '<leader>lr', function()
             vim.lsp.buf.rename()
         end, opts)
 
-        vim.keymap.set('n', '<leader>lca', function()
+        vim.keymap.set('n', '<leader>la', function()
             vim.lsp.buf.code_action()
         end, opts)
 
-        vim.keymap.set('i', '<leader>lhs', function()
+        vim.keymap.set('i', '<C-h>', function()
             vim.lsp.buf.signature_help()
         end, opts)
 
@@ -111,9 +112,67 @@ autocmd('LspAttach', {
         -- code, if the language server you are using supports them
         -- This may be unwanted, since they displace some of your code
         if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
-            vim.keymap.set('n', '<leader>lhi', function()
+            vim.keymap.set('n', '<leader>lh', function()
                 vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled)
             end, opts)
         end
+    end,
+})
+
+-- close some filetypes with <q>
+vim.api.nvim_create_autocmd('FileType', {
+    group = augroup 'close_with_q',
+    pattern = {
+        'PlenaryTestPopup',
+        'checkhealth',
+        'dbout',
+        'gitsigns-blame',
+        'grug-far',
+        'help',
+        'lspinfo',
+        'neotest-output',
+        'neotest-output-panel',
+        'neotest-summary',
+        'notify',
+        'qf',
+        'snacks_win',
+        'spectre_panel',
+        'startuptime',
+        'tsplayground',
+    },
+    callback = function(event)
+        vim.bo[event.buf].buflisted = false
+        vim.schedule(function()
+            vim.keymap.set('n', 'q', function()
+                vim.cmd 'close'
+                pcall(vim.api.nvim_buf_delete, event.buf, { force = true })
+            end, {
+                buffer = event.buf,
+                silent = true,
+                desc = 'Quit buffer',
+            })
+        end)
+    end,
+})
+
+-- wrap and check for spell in text filetypes
+vim.api.nvim_create_autocmd('FileType', {
+    group = augroup 'wrap_spell',
+    pattern = { 'text', 'plaintex', 'typst', 'gitcommit', 'markdown' },
+    callback = function()
+        vim.opt_local.wrap = true
+        vim.opt_local.spell = true
+    end,
+})
+
+-- Auto create dir when saving a file, in case some intermediate directory does not exist
+vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
+    group = augroup 'auto_create_dir',
+    callback = function(event)
+        if event.match:match '^%w%w+:[\\/][\\/]' then
+            return
+        end
+        local file = vim.uv.fs_realpath(event.match) or event.match
+        vim.fn.mkdir(vim.fn.fnamemodify(file, ':p:h'), 'p')
     end,
 })

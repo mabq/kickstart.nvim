@@ -13,14 +13,10 @@ return {
             'j-hui/fidget.nvim',
             -- Adds extra capabilities for LSP completions
             'hrsh7th/cmp-nvim-lsp',
-            {
-                -- IMPORTANT! See `autocmd` file for lsp related keymaps...
-                'folke/trouble.nvim',
-                opts = {}, -- for default options, refer to the configuration section for custom setup.
-                cmd = 'Trouble',
-            },
         },
         config = function()
+            -- IMPORTANT! See `autocmd` file for lsp related keymaps...
+
             local cmp_lsp = require 'cmp_nvim_lsp'
             local capabilities = vim.tbl_deep_extend('force', {}, vim.lsp.protocol.make_client_capabilities(), cmp_lsp.default_capabilities())
 
@@ -82,6 +78,7 @@ return {
 
     {
         -- TypeScript, better alternative to `ts-ls`
+        -- Important! See https://github.com/pmizio/typescript-tools.nvim?tab=readme-ov-file#custom-user-commands for commands like `TSToolsRenameFile`
         'pmizio/typescript-tools.nvim',
         dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
         opts = {
