@@ -27,7 +27,16 @@ return {
         },
     },
     config = function()
-        require('telescope').setup {}
+        local actions = require 'telescope.actions'
+        require('telescope').setup {
+            defaults = {
+                mappings = {
+                    n = {
+                        ['q'] = actions.close,
+                    },
+                },
+            },
+        }
 
         -- Enable Telescope extensions if they are installed
         pcall(require('telescope').load_extension, 'fzf')
