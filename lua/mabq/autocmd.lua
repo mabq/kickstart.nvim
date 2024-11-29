@@ -50,7 +50,7 @@ autocmd('LspAttach', {
         end, opts)
 
         -- Find references for the word under your cursor.
-        vim.keymap.set('n', '<leader>lf', '<cmd>Trouble lsp_references toggle<CR>', opts)
+        vim.keymap.set('n', '<leader>lr', '<cmd>Trouble lsp_references toggle<CR>', opts)
 
         -- LPS diagnitics
         vim.keymap.set('n', '<leader>ld', '<cmd>Trouble diagnostics toggle<CR>', opts)
@@ -73,7 +73,7 @@ autocmd('LspAttach', {
         --  Symbols are things like variables, functions, types, etc.
         vim.keymap.set('n', '<leader>ls', '<cmd>Trouble lsp_document_symbols toggle<CR>', opts)
 
-        vim.keymap.set('n', '<leader>lr', function()
+        vim.keymap.set('n', '<leader>ln', function()
             vim.lsp.buf.rename()
         end, opts)
 
@@ -152,6 +152,24 @@ vim.api.nvim_create_autocmd('FileType', {
                 desc = 'Quit buffer',
             })
         end)
+    end,
+})
+
+-- go to last loc when opening a buffer
+vim.api.nvim_create_autocmd('BufReadPost', {
+    group = augroup 'last_loc',
+    callback = function(event)
+        local exclude = { 'gitcommit' }
+        local buf = event.buf
+        if vim.tbl_contains(exclude, vim.bo[buf].filetype) or vim.b[buf].lazyvim_last_loc then
+            return
+        end
+        vim.b[buf].lazyvim_last_loc = true
+        local mark = vim.api.nvim_buf_get_mark(buf, '"')
+        local lcount = vim.api.nvim_buf_line_count(buf)
+        if mark[1] > 0 and mark[1] <= lcount then
+            pcall(vim.api.nvim_win_set_cursor, 0, mark)
+        end
     end,
 })
 

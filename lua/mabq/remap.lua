@@ -2,47 +2,46 @@
 -- `:h lua-guide-mappings`  - how to set keymappings in Lua
 -- `:h map-modes`           - check modes table
 
-vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
-vim.keymap.set('n', 'Q', '<nop>')
+-- No special key:
+
+vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>', { desc = 'Clear search hightlight' })
+-- vim.keymap.set('n', 'Q', '<nop>', { desc = 'Disable Q default behavior' })
 
 vim.keymap.set('n', 'J', 'mzJ`z', { desc = 'Join line (without moving cursor)' })
-vim.keymap.set('n', 'n', 'nzzzv', { desc = 'Next (centered)' })
-vim.keymap.set('n', 'N', 'Nzzzv', { desc = 'Previous (centered)' })
+vim.keymap.set('n', 'n', 'nzzzv', { desc = 'Next match (centered)' })
+vim.keymap.set('n', 'N', 'Nzzzv', { desc = 'Previous match (centered)' })
 
-vim.keymap.set('v', '<', '<gv') -- better indenting
-vim.keymap.set('v', '>', '>gv')
+vim.keymap.set('v', '<', '<gv', { desc = 'Decrease indentation (keep selection)' })
+vim.keymap.set('v', '>', '>gv', { desc = 'Increase indentation (keep selection)' })
 
--- move through popup options with up/down arrows
+vim.keymap.set('v', 'J', ":<C-u>execute \"'<,'>move '>+\" . v:count1<cr>gv=gv", { desc = 'Move line down' })
+vim.keymap.set('v', 'K', ":<C-u>execute \"'<,'>move '<-\" . (v:count1 + 1)<cr>gv=gv", { desc = 'Move line up' })
+
 vim.keymap.set('c', '<down>', function()
     if vim.fn.pumvisible() == 1 then
         return '<c-n>'
     end
     return '<down>'
-end, { expr = true })
+end, { expr = true, desc = 'Select next menu item' })
 vim.keymap.set('c', '<up>', function()
     if vim.fn.pumvisible() == 1 then
         return '<c-p>'
     end
     return '<up>'
-end, { expr = true })
+end, { expr = true, desc = 'Select previous menu item' })
 
---
+-- Ctrl --
 
-vim.keymap.set('n', '<C-f>', ':silent !tmux neww $HOME/.config/tmux/scripts/tmux-sessionizer.sh<CR>', { desc = 'Tmux-sessionizer' })
+vim.keymap.set('n', '<C-f>', ':silent !tmux neww $HOME/.config/tmux/scripts/tmux-sessionizer.sh<CR>', { desc = 'Run tmux-sessionizer' })
 
 vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'Page down (centered)' })
 vim.keymap.set('n', '<C-u>', '<C-u>zz', { desc = 'Page up (centered)' })
 
---
+-- Alt --
 
-vim.keymap.set('n', '<A-j>', "<cmd>execute 'move .+' . v:count1<cr>==", { desc = 'Move Down' })
-vim.keymap.set('n', '<A-k>', "<cmd>execute 'move .-' . (v:count1 + 1)<cr>==", { desc = 'Move Up' })
-vim.keymap.set('i', '<A-j>', '<esc><cmd>m .+1<cr>==gi', { desc = 'Move Down' })
-vim.keymap.set('i', '<A-k>', '<esc><cmd>m .-2<cr>==gi', { desc = 'Move Up' })
-vim.keymap.set('v', '<A-j>', ":<C-u>execute \"'<,'>move '>+\" . v:count1<cr>gv=gv", { desc = 'Move Down' })
-vim.keymap.set('v', '<A-k>', ":<C-u>execute \"'<,'>move '<-\" . (v:count1 + 1)<cr>gv=gv", { desc = 'Move Up' })
+-- see vim-tmux-navigator
 
---
+-- Leader
 
 vim.g.mapleader = ' '
 

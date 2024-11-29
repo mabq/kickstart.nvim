@@ -3,7 +3,6 @@ return {
     branch = 'harpoon2',
     config = function()
         local harpoon = require 'harpoon'
-
         harpoon:setup {
             menu = {
                 width = vim.api.nvim_win_get_width(0) - 4,
@@ -20,7 +19,7 @@ return {
             harpoon:list():add()
         end)
 
-        vim.keymap.set('n', '<C-e>', function()
+        vim.keymap.set('n', '<C-p>', function()
             harpoon.ui:toggle_quick_menu(harpoon:list())
         end)
 

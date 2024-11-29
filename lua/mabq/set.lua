@@ -6,8 +6,15 @@ vim.opt.guicursor = ''
 vim.opt.number = true
 vim.opt.relativenumber = true
 
+vim.opt.smartindent = true
+-- options related to tab-width are set dynamically by the `sleuth` plugin
+
 vim.opt.wrap = false
 vim.opt.breakindent = true -- preserve indentation in wrapped text (when enabled)
+vim.opt.linebreak = true -- do not break words when wrapping
+
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
 
 vim.opt.swapfile = false
 vim.opt.backup = false
@@ -36,8 +43,5 @@ vim.opt.splitbelow = true
 --  See `:help 'list'` and `:help 'listchars'`
 vim.opt.list = true
 vim.opt.listchars = { tab = '│ ', trail = '·', nbsp = '␣' }
-
--- vim.opt.ignorecase = true
--- vim.opt.smartcase = true
 
 -- vim.opt.showmode = false
