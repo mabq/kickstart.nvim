@@ -13,6 +13,7 @@ return {
             'j-hui/fidget.nvim',
             -- Adds extra capabilities for LSP completions
             'hrsh7th/cmp-nvim-lsp',
+            -- Symbol navigation
         },
         config = function()
             -- IMPORTANT! See `autocmd` file for lsp related keymaps...
@@ -74,6 +75,15 @@ return {
                 },
             }
         end,
+    },
+
+    {
+        'SmiteshP/nvim-navbuddy',
+        dependencies = {
+            'SmiteshP/nvim-navic',
+            'MunifTanjim/nui.nvim',
+        },
+        opts = { lsp = { auto_attach = true } },
     },
 
     {

@@ -52,6 +52,9 @@ autocmd('LspAttach', {
         -- Find references for the word under your cursor.
         vim.keymap.set('n', '<leader>lr', '<cmd>Trouble lsp_references toggle<CR>', opts)
 
+        -- nvim-navbuddy
+        vim.keymap.set('n', '<leader>le', '<cmd>Navbuddy<CR>', opts)
+
         -- LPS diagnitics
         vim.keymap.set('n', '<leader>ld', '<cmd>Trouble diagnostics toggle<CR>', opts)
         vim.keymap.set('n', '<leader>lD', '<cmd>Trouble diagnostics toggle filter.buf=0<CR>', opts)
